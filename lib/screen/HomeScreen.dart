@@ -1,0 +1,42 @@
+import 'package:flutter/material.dart';
+import 'package:food/screen/pages/Home.dart';
+import 'package:food/screen/pages/search.dart';
+import 'package:food/screen/pages/service.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+List pages = [Home(), Service(), Search()];
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _index = 0;
+  void onTap(int index) {
+    setState(() {
+      _index = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body:
+          pages.isEmpty
+              ? Center(child: CircularProgressIndicator())
+              : pages[_index],
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'ໜ້າຫຼັກ'),
+
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'ຄົ້ນຫາ'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'ໂປຣໄຟລ໌'),
+        ],
+        currentIndex: _index,
+        onTap: onTap,
+      ),
+    );
+  }
+}
