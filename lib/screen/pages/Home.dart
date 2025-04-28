@@ -1,9 +1,23 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:food/controller/category.dart';
 import 'package:food/controller/product.dart';
 import 'package:food/controller/unit.dart';
 import 'package:food/service/api_service.dart';
+
+final List<String> imgList = [
+  'assets/images/1.jpg',
+  'assets/images/2.jpg',
+  'assets/images/3.webp',
+  'assets/images/4.jpg',
+  'assets/images/5.jpg',
+  'assets/images/6.jpg',
+  'assets/images/7.jpg',
+  'assets/images/8.jpg',
+  'assets/images/9.jpg',
+  'assets/images/10.jpg',
+];
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -63,7 +77,7 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         actions: [
           IconButton(
-            icon: Icon(Icons.notifications_outlined, color: Colors.blueGrey),
+            icon: Icon(Icons.notifications_outlined),
             onPressed: () {},
           ),
         ],
@@ -88,7 +102,7 @@ class _HomeState extends State<Home> {
             ),
 
             ListTile(
-              leading: Icon(Icons.shopping_cart),
+              leading: Icon(Icons.shopping_cart, color: Colors.green),
               title: Text(
                 "ຈັດການສິນຄ້າ",
                 style: TextStyle(fontSize: 16, color: Colors.black),
@@ -103,7 +117,7 @@ class _HomeState extends State<Home> {
             ),
             Divider(),
             ListTile(
-              leading: Icon(Icons.inventory),
+              leading: Icon(Icons.inventory, color: Colors.green),
               title: Text(
                 "ຈັດການຫົວໜ່ວຍ",
                 style: TextStyle(fontSize: 16, color: Colors.black),
@@ -118,9 +132,9 @@ class _HomeState extends State<Home> {
             ),
             Divider(),
             ListTile(
-              leading: Icon(Icons.view_list),
+              leading: Icon(Icons.view_list, color: Colors.green),
               title: Text(
-                "ຈັດການໝວດໝູ່",
+                "ຈັດການປະເພດ",
                 style: TextStyle(fontSize: 16, color: Colors.black),
               ),
               onTap: () {
@@ -138,29 +152,43 @@ class _HomeState extends State<Home> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              height: 200,
-              width: double.infinity,
-              color: Colors.green,
-              child: Center(
-                child: Text(
-                  "ແບນເນີ",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: CarouselSlider(
+                items:
+                    imgList.map((item) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.asset(
+                            item,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                options: CarouselOptions(
+                  autoPlay: true,
+                  autoPlayAnimationDuration: Duration(milliseconds: 2000),
+                  height: 140,
+                  enlargeCenterPage: true,
+                  viewportFraction: 1,
                 ),
               ),
             ),
-            SizedBox(height: 20),
+
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Text(
-                    "ໝວດໝູ່",
+                    "ປະເພດ",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),

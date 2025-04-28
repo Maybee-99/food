@@ -39,6 +39,18 @@ class _CategoryState extends State<Unit> {
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                loadUnit();
+                unitController.clear();
+                _isLoading = true;
+              });
+            },
+            icon: Icon(Icons.refresh, color: Colors.black),
+          ),
+        ],
       ),
       body: Center(
         child: Column(
@@ -48,44 +60,7 @@ class _CategoryState extends State<Unit> {
               width: double.infinity,
               child: Row(
                 children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Form(
-                          key: _formKey,
-                          child: TextFormField(
-                            controller: unitController,
-                            validator:
-                                (value) =>
-                                    value!.isEmpty ? "ກະລຸນາປ້ອນຫົວໜ່ວຍ" : null,
-                            decoration: InputDecoration(
-                              hintText: "ປ້ອນຊື່ຫົວໜ່ວຍ",
-                              hintStyle: TextStyle(color: Colors.grey),
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.grey,
-                                  width: 1,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.green,
-                                  width: 1,
-                                ),
-                              ),
-                              isDense: true,
-                              contentPadding: EdgeInsets.symmetric(
-                                vertical: 10,
-                                horizontal: 10,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
+                  Expanded(child: Header()),
                   SizedBox(width: 10),
                   ElevatedButton(
                     onPressed: () {
@@ -117,7 +92,6 @@ class _CategoryState extends State<Unit> {
                 ],
               ),
             ),
-            Divider(color: Colors.grey, thickness: 1),
             SizedBox(height: 10),
             Expanded(child: units()),
           ],
@@ -128,7 +102,7 @@ class _CategoryState extends State<Unit> {
 
   Widget units() {
     return _isLoading
-        ? Center(child: CircularProgressIndicator(color: Colors.green,))
+        ? Center(child: CircularProgressIndicator(color: Colors.green))
         : _unit.isEmpty
         ? Text("ບໍ່ມີຂໍໍ່ມູນ")
         : ListView.builder(
@@ -153,142 +127,13 @@ class _CategoryState extends State<Unit> {
                     IconButton(
                       icon: Icon(Icons.edit_document, color: Colors.blue),
                       onPressed: () {
-                        unitController.text =
-                            _unit[index]['unit_name'].toString();
-                        final GlobalKey<FormState> _dialogformKey =
-                            GlobalKey<FormState>();
-                        showCupertinoDialog(
-                          context: context,
-                          builder: (context) {
-                            return CupertinoAlertDialog(
-                              title: Text(
-                                "ແກ້ໄຂຫົວໜ່ວຍ",
-                                style: TextStyle(fontSize: 16),
-                              ),
-                              content: Material(
-                                child: Form(
-                                  key: _dialogformKey,
-                                  child: TextFormField(
-                                    controller: unitController,
-                                    validator:
-                                        (value) =>
-                                            value!.isEmpty
-                                                ? "ປ້ອນຊື່ຫົວໜ່ວຍ"
-                                                : null,
-                                    decoration: InputDecoration(
-                                      hintText: "ປ້ອນຊື່ຫົວໜ່ວຍ",
-                                      hintStyle: TextStyle(color: Colors.grey),
-                                      border: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Colors.grey,
-                                          width: 1,
-                                        ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Colors.green,
-                                          width: 1,
-                                        ),
-                                      ),
-                                      isDense: true,
-                                      contentPadding: EdgeInsets.symmetric(
-                                        vertical: 10,
-                                        horizontal: 10,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: Text(
-                                    "ຍົກເລີກ",
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    if (_formKey.currentState!.validate()) {
-                                      api
-                                          .updateUnit(
-                                            context,
-                                            unitController.text,
-                                            _unit[index]['unit_id'].toString(),
-                                          )
-                                          .then((value) {
-                                            if (value != null) {
-                                              setState(() {
-                                                _unit[index] = value;
-                                                unitController.clear();
-                                              });
-                                              loadUnit();
-                                            }
-                                          });
-                                      Navigator.pop(context);
-                                    }
-                                  },
-                                  child: Text(
-                                    "ແກ້ໄຂ",
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                        updateUnit(index);
                       },
                     ),
                     IconButton(
                       icon: Icon(Icons.delete, color: Colors.red),
                       onPressed: () {
-                        showCupertinoDialog(
-                          context: context,
-                          builder: (context) {
-                            return CupertinoAlertDialog(
-                              title: Text(
-                                "ລຶບຫົວໜ່ວຍ",
-                                style: TextStyle(fontSize: 16),
-                              ),
-                              content: Text(
-                                "ທ່ານແນ່ໃຈຈະລຶບແທ້ບໍ່?",
-                                style: TextStyle(fontSize: 14),
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: Text(
-                                    "ຍົກເລີກ",
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    api
-                                        .deleteUnit(
-                                          context,
-                                          _unit[index]['unit_id'].toString(),
-                                        )
-                                        .then((value) {
-                                          if (value != null) {
-                                            setState(() {
-                                              _unit.removeAt(index);
-                                            });
-                                            loadUnit();
-                                            unitController.clear();
-                                          }
-                                        });
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text(
-                                    "ຕົກລົງ",
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                        deleteUnit(index);
                       },
                     ),
                   ],
@@ -297,5 +142,134 @@ class _CategoryState extends State<Unit> {
             );
           },
         );
+  }
+
+  Widget Header() {
+    return Form(
+      key: _formKey,
+      child: TextFormField(
+        controller: unitController,
+        validator: (value) => value!.isEmpty ? "ກະລຸນາປ້ອນຫົວໜ່ວຍ" : null,
+        decoration: InputDecoration(
+          hintText: "ປ້ອນຊື່ຫົວໜ່ວຍ",
+          hintStyle: TextStyle(color: Colors.grey),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey, width: 1),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.green, width: 1),
+          ),
+          isDense: true,
+          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+        ),
+      ),
+    );
+  }
+
+  void updateUnit(int index) {
+    unitController.text = _unit[index]['unit_name'].toString();
+    final GlobalKey<FormState> _dialogformKey = GlobalKey<FormState>();
+    showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: Text("ແກ້ໄຂຫົວໜ່ວຍ", style: TextStyle(fontSize: 16)),
+          content: Material(
+            child: Form(
+              key: _dialogformKey,
+              child: TextFormField(
+                controller: unitController,
+                validator: (value) => value!.isEmpty ? "ປ້ອນຊື່ຫົວໜ່ວຍ" : null,
+                decoration: InputDecoration(
+                  hintText: "ປ້ອນຊື່ຫົວໜ່ວຍ",
+                  hintStyle: TextStyle(color: Colors.grey),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey, width: 1),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.green, width: 1),
+                  ),
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: 10,
+                    horizontal: 10,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                unitController.clear();
+              },
+              child: Text("ຍົກເລີກ", style: TextStyle(color: Colors.black)),
+            ),
+            TextButton(
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  api
+                      .updateUnit(
+                        context,
+                        unitController.text,
+                        _unit[index]['unit_id'].toString(),
+                      )
+                      .then((value) {
+                        if (value != null) {
+                          setState(() {
+                            _unit[index] = value;
+                            unitController.clear();
+                          });
+                          loadUnit();
+                        }
+                      });
+                  Navigator.pop(context);
+                }
+              },
+              child: Text("ແກ້ໄຂ", style: TextStyle(color: Colors.black)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void deleteUnit(int index) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: Text("ລຶບຫົວໜ່ວຍ", style: TextStyle(fontSize: 16)),
+          content: Text(
+            "ທ່ານແນ່ໃຈຈະລຶບແທ້ບໍ່?",
+            style: TextStyle(fontSize: 14),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("ຍົກເລີກ", style: TextStyle(color: Colors.black)),
+            ),
+            TextButton(
+              onPressed: () {
+                api
+                    .deleteUnit(context, _unit[index]['unit_id'].toString())
+                    .then((value) {
+                      if (value != null) {
+                        setState(() {
+                          _unit.removeAt(index);
+                        });
+                        loadUnit();
+                        unitController.clear();
+                      }
+                    });
+                Navigator.pop(context);
+              },
+              child: Text("ຕົກລົງ", style: TextStyle(color: Colors.black)),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

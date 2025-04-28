@@ -11,7 +11,6 @@ class MyApp extends StatefulWidget {
   @override
   State<MyApp> createState() => _MyAppState();
 }
-
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
@@ -19,17 +18,17 @@ class _MyAppState extends State<MyApp> {
       title: 'Food Order App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.white,
+        scaffoldBackgroundColor: const Color.fromARGB(255, 239, 242, 239),
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
-          backgroundColor: Colors.white,
-          selectedItemColor: Colors.green,
-          unselectedItemColor: const Color.fromARGB(255, 60, 57, 57),
+          backgroundColor: Colors.green,
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.black,
           showUnselectedLabels: true,
           showSelectedLabels: true,
           elevation: 2,
         ),
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.green,
           elevation: 0,
           iconTheme: IconThemeData(color: Colors.black),
           titleTextStyle: TextStyle(color: Colors.black, fontSize: 20),

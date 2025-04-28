@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:food/service/api_service.dart';
+import 'package:iconsax/iconsax.dart';
 
 class Category extends StatefulWidget {
   const Category({super.key});
@@ -35,10 +36,22 @@ class _CategoryState extends State<Category> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "ຈັດການໝວດໝູ່",
+          "ຈັດການປະເພດ",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                loadCategorise();
+                _categoryNameController.clear();
+                _isLoading = true;
+              });
+            },
+            icon: Icon(Icons.refresh),
+          ),
+        ],
       ),
       body: Center(
         child: Column(
@@ -48,47 +61,7 @@ class _CategoryState extends State<Category> {
               width: double.infinity,
               child: Row(
                 children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Material(
-                          color: Colors.transparent,
-                          child: Form(
-                            key: _formKey,
-                            child: TextFormField(
-                              controller: _categoryNameController,
-                              validator:
-                                  (value) =>
-                                      value!.isEmpty ? "ປ້ອນຊື່ໝວດໝູ່" : null,
-                              decoration: InputDecoration(
-                                hintText: "ປ້ອນຊື່ໝວດໝູ່",
-                                hintStyle: TextStyle(color: Colors.grey),
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.grey,
-                                    width: 1,
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.green,
-                                    width: 1,
-                                  ),
-                                ),
-                                isDense: true,
-                                contentPadding: EdgeInsets.symmetric(
-                                  vertical: 10,
-                                  horizontal: 10,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
+                  Expanded(child: Header()),
                   SizedBox(width: 10),
                   ElevatedButton(
                     onPressed: () {
@@ -159,154 +132,157 @@ class _CategoryState extends State<Category> {
                     IconButton(
                       icon: Icon(Icons.edit_document, color: Colors.blue),
                       onPressed: () {
-                        _categoryNameController.text =
-                            _categories[index]['category_name'].toString();
-                        final GlobalKey<FormState> _dialogformKey =
-                            GlobalKey<FormState>();
-                        showCupertinoDialog(
-                          context: context,
-                          builder: (context) {
-                            return CupertinoAlertDialog(
-                              title: Text(
-                                "ແກ້ໄຂໝວດໝູ່",
-                                style: TextStyle(fontSize: 16),
-                              ),
-                              content: Material(
-                                color: Colors.transparent,
-                                child: Form(
-                                  key: _dialogformKey,
-                                  child: TextFormField(
-                                    controller: _categoryNameController,
-                                    validator:
-                                        (value) =>
-                                            value!.isEmpty
-                                                ? "ປ້ອນຊື່ໝວດໝູ່"
-                                                : null,
-                                    decoration: InputDecoration(
-                                      hintText: "ປ້ອນຊື່ໝວດໝູ່",
-                                      hintStyle: TextStyle(color: Colors.grey),
-                                      border: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Colors.grey,
-                                          width: 1,
-                                        ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Colors.green,
-                                          width: 1,
-                                        ),
-                                      ),
-                                      isDense: true,
-                                      contentPadding: EdgeInsets.symmetric(
-                                        vertical: 10,
-                                        horizontal: 10,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: Text(
-                                    "ຍົກເລີກ",
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    if (_dialogformKey.currentState!
-                                        .validate()) {
-                                      api
-                                          .updateCategory(
-                                            context,
-                                            _categoryNameController.text,
-                                            _categories[index]['category_id']
-                                                .toString(),
-                                          )
-                                          .then((value) {
-                                            if (value != null) {
-                                              setState(() {
-                                                _categories[index] = value;
-                                                _categoryNameController.clear();
-                                              });
-                                              loadCategorise();
-                                            }
-                                          });
-                                      Navigator.pop(context);
-                                    }
-                                  },
-                                  child: Text(
-                                    "ແກ້ໄຂ",
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                        updateCategory(index);
                       },
                     ),
                     IconButton(
                       icon: Icon(Icons.delete, color: Colors.red),
                       onPressed: () {
-                        showCupertinoDialog(
-                          context: context,
-                          builder: (context) {
-                            return CupertinoAlertDialog(
-                              title: Text(
-                                "ລຶບໝວດໝູ່",
-                                style: TextStyle(fontSize: 16),
-                              ),
-                              content: Text(
-                                "ທ່ານແນ່ໃຈຈະລຶບແທ້ບໍ່?",
-                                style: TextStyle(fontSize: 14),
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: Text(
-                                    "ຍົກເລີກ",
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    api
-                                        .deleteCategory(
-                                          context,
-                                          _categories[index]['category_id']
-                                              .toString(),
-                                        )
-                                        .then((value) {
-                                          if (value != null) {
-                                            setState(() {
-                                              _categories.removeAt(index);
-                                            });
-                                            loadCategorise();
-                                            _categoryNameController.clear();
-                                          }
-                                        });
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text(
-                                    "ຕົກລົງ",
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                        deleteCategory(index);
                       },
                     ),
-                  
                   ],
                 ),
               ),
             );
           },
         );
+  }
+
+  Widget Header() {
+    return Material(
+      color: Colors.transparent,
+      child: Form(
+        key: _formKey,
+        child: TextFormField(
+          controller: _categoryNameController,
+          validator: (value) => value!.isEmpty ? "ປ້ອນຊື່ປະເພດ" : null,
+          decoration: InputDecoration(
+            hintText: "ປ້ອນຊື່ປະເພດ",
+            hintStyle: TextStyle(color: Colors.grey),
+            border: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey, width: 1),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.green, width: 1),
+            ),
+            isDense: true,
+            contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void updateCategory(int index) {
+    _categoryNameController.text =
+        _categories[index]['category_name'].toString();
+    final GlobalKey<FormState> _dialogformKey = GlobalKey<FormState>();
+    showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: Text("ແກ້ໄຂໝວດໝູ່", style: TextStyle(fontSize: 16)),
+          content: Material(
+            color: Colors.transparent,
+            child: Form(
+              key: _dialogformKey,
+              child: TextFormField(
+                controller: _categoryNameController,
+                validator: (value) => value!.isEmpty ? "ປ້ອນຊື່ໝວດໝູ່" : null,
+                decoration: InputDecoration(
+                  hintText: "ປ້ອນຊື່ໝວດໝູ່",
+                  hintStyle: TextStyle(color: Colors.grey),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey, width: 1),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.green, width: 1),
+                  ),
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: 10,
+                    horizontal: 10,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _categoryNameController.clear();
+              },
+              child: Text("ຍົກເລີກ", style: TextStyle(color: Colors.black)),
+            ),
+            TextButton(
+              onPressed: () {
+                if (_dialogformKey.currentState!.validate()) {
+                  api
+                      .updateCategory(
+                        context,
+                        _categoryNameController.text,
+                        _categories[index]['category_id'].toString(),
+                      )
+                      .then((value) {
+                        if (value != null) {
+                          setState(() {
+                            _categories[index] = value;
+                            _categoryNameController.clear();
+                          });
+                          loadCategorise();
+                        }
+                      });
+                  Navigator.pop(context);
+                }
+              },
+              child: Text("ແກ້ໄຂ", style: TextStyle(color: Colors.black)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void deleteCategory(int index) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: Text("ລຶບໝວດໝູ່", style: TextStyle(fontSize: 16)),
+          content: Text(
+            "ທ່ານແນ່ໃຈຈະລຶບແທ້ບໍ່?",
+            style: TextStyle(fontSize: 14),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("ຍົກເລີກ", style: TextStyle(color: Colors.black)),
+            ),
+            TextButton(
+              onPressed: () {
+                api
+                    .deleteCategory(
+                      context,
+                      _categories[index]['category_id'].toString(),
+                    )
+                    .then((value) {
+                      if (value != null) {
+                        setState(() {
+                          _categories.removeAt(index);
+                        });
+                        loadCategorise();
+                        _categoryNameController.clear();
+                      }
+                    });
+                Navigator.pop(context);
+              },
+              child: Text("ຕົກລົງ", style: TextStyle(color: Colors.black)),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

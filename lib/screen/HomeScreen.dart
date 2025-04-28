@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food/screen/pages/Home.dart';
 import 'package:food/screen/pages/search.dart';
 import 'package:food/screen/pages/service.dart';
+import 'package:iconsax/iconsax.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,7 +11,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-List pages = [Home(), Service(), Search()];
+List pages = [Home(), Search(), Profile()];
 
 class _HomeScreenState extends State<HomeScreen> {
   int _index = 0;
@@ -29,10 +30,13 @@ class _HomeScreenState extends State<HomeScreen> {
               : pages[_index],
       bottomNavigationBar: BottomNavigationBar(
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'ໜ້າຫຼັກ'),
+          BottomNavigationBarItem(icon: Icon(Iconsax.home), label: 'ໜ້າຫຼັກ'),
 
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'ຄົ້ນຫາ'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'ໂປຣໄຟລ໌'),
+          BottomNavigationBarItem(
+            icon: Icon(Iconsax.personalcard),
+            label: 'ໂປຣໄຟລ໌',
+          ),
         ],
         currentIndex: _index,
         onTap: onTap,

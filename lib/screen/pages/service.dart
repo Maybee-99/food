@@ -1,18 +1,18 @@
 import 'package:flutter/cupertino.dart';
 
-class Service extends StatefulWidget {
-  const Service({super.key});
+class Profile extends StatefulWidget {
+  const Profile({super.key});
 
   @override
-  State<Service> createState() => _ServiceState();
+  State<Profile> createState() => _ProfileState();
 }
 
-class _ServiceState extends State<Service> {
+class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Text(
-        'Service',
+        'Profile',
         style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
       ),
     );
