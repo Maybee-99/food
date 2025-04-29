@@ -1,18 +1,18 @@
 import 'package:flutter/cupertino.dart';
 
-class Profile extends StatefulWidget {
-  const Profile({super.key});
+class Cart extends StatefulWidget {
+  const Cart({super.key});
 
   @override
-  State<Profile> createState() => _ProfileState();
+  State<Cart> createState() => _CartState();
 }
 
-class _ProfileState extends State<Profile> {
+class _CartState extends State<Cart> {
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Text(
-        'Profile',
+        'Cart',
         style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
       ),
     );

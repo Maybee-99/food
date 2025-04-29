@@ -11,7 +11,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-List pages = [Home(), Search(), Profile()];
+List pages = [Home(), Cart(), Search()];
 
 class _HomeScreenState extends State<HomeScreen> {
   int _index = 0;
@@ -32,11 +32,11 @@ class _HomeScreenState extends State<HomeScreen> {
         items: [
           BottomNavigationBarItem(icon: Icon(Iconsax.home), label: 'ໜ້າຫຼັກ'),
 
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'ຄົ້ນຫາ'),
           BottomNavigationBarItem(
-            icon: Icon(Iconsax.personalcard),
-            label: 'ໂປຣໄຟລ໌',
+            icon: Icon(Icons.shopping_cart),
+            label: 'ກະຕ່າ',
           ),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'ຄົ້ນຫາ'),
         ],
         currentIndex: _index,
         onTap: onTap,

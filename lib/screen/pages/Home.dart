@@ -58,9 +58,6 @@ class _HomeState extends State<Home> {
   }
 
   void loadProductsWithCategory(int index) async {
-    setState(() {
-      _isLoading = true;
-    });
     final products = await api.getProductsWithCate(
       context,
       _categories[index]['category_name'],
@@ -224,7 +221,7 @@ class _HomeState extends State<Home> {
 
   Widget category() {
     if (_isLoading) {
-      return Center(child: CircularProgressIndicator());
+      return Center(child: CircularProgressIndicator(color: Colors.green));
     }
     return SizedBox(
       height: 50,
@@ -281,8 +278,6 @@ class _HomeState extends State<Home> {
         itemCount: _products.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          crossAxisSpacing: 5,
-          mainAxisSpacing: 5,
         ),
         itemBuilder: (context, index) {
           return Card(
