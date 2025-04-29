@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:food/controller/addProduct.dart';
-import 'package:food/service/api_service.dart';
+import 'package:food/service/categoryService.dart';
+import 'package:food/service/productService.dart';
+import 'package:food/service/unitService.dart';
 import 'package:iconsax/iconsax.dart';
 
 class Products extends StatefulWidget {
@@ -20,7 +22,9 @@ TextEditingController _catId = TextEditingController();
 TextEditingController _unitId = TextEditingController();
 
 class _ProductsState extends State<Products> {
-  final api = api_service();
+  final productAIP = ProductService();
+  final categoryAIP = CategoryService();
+  final unitAIP = UnitService();
   bool _isLoading = true;
   List<dynamic> _products = [];
   List category = [];
@@ -35,7 +39,7 @@ class _ProductsState extends State<Products> {
   }
 
   void loadProducts() async {
-    final products = await api.getProducts(context);
+    final products = await productAIP.getProducts(context);
     setState(() {
       _products = products;
       _isLoading = false;
@@ -43,7 +47,7 @@ class _ProductsState extends State<Products> {
   }
 
   void loadCategory() async {
-    final data = await api.getCategories(context);
+    final data = await categoryAIP.getCategories(context);
     setState(() {
       category = data;
       _isLoading = false;
@@ -51,7 +55,7 @@ class _ProductsState extends State<Products> {
   }
 
   void loadUnit() async {
-    final data = await api.getUnit(context);
+    final data = await unitAIP.getUnit(context);
     setState(() {
       unit = data;
       _isLoading = false;
@@ -75,7 +79,7 @@ class _ProductsState extends State<Products> {
             ),
             TextButton(
               onPressed: () {
-                api
+                productAIP
                     .deleteProduct(
                       context,
                       _products[index]['product_id'].toString(),
@@ -388,7 +392,7 @@ class _ProductsState extends State<Products> {
                           ElevatedButton(
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
-                                api.updateProduct(
+                                productAIP.updateProduct(
                                   context,
                                   _productName.text,
                                   _price.text,

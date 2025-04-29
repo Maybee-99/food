@@ -1,10 +1,10 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:food/service/api_service.dart';
+import 'package:food/service/categoryService.dart';
+import 'package:food/service/productService.dart';
+import 'package:food/service/unitService.dart';
 import 'package:food/widget/widget_reuse.dart';
-import 'package:http/http.dart' as http;
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:universal_io/io.dart' as universal_io;
@@ -25,7 +25,9 @@ TextEditingController _categoryId = TextEditingController();
 TextEditingController _unitId = TextEditingController();
 
 class _AddProductState extends State<AddProduct> {
-  final api = api_service();
+  final productAPI = ProductService();
+  final categoryAPI = CategoryService();
+  final unitAPI = UnitService();
   final _categorries = [];
   final _units = [];
   bool isLoading = true;
@@ -38,7 +40,7 @@ class _AddProductState extends State<AddProduct> {
   }
 
   void loadCategory() async {
-    final categories = await api.getCategories(context);
+    final categories = await categoryAPI.getCategories(context);
     setState(() {
       _categorries.addAll(categories);
       isLoading = false;
@@ -46,7 +48,7 @@ class _AddProductState extends State<AddProduct> {
   }
 
   void loadUnit() async {
-    final units = await api.getUnit(context);
+    final units = await unitAPI.getUnit(context);
     setState(() {
       _units.addAll(units);
       isLoading = false;
@@ -257,12 +259,12 @@ class _AddProductState extends State<AddProduct> {
                     padding: const EdgeInsets.symmetric(horizontal: 5),
                     child: ElevatedButton(
                       onPressed: () async {
-                        String imageUrl = await api.upLoadImageToCloud(
+                        String imageUrl = await productAPI.upLoadImageToCloud(
                           _file!,
                           context,
                         );
                         if (_formKey.currentState!.validate()) {
-                          api.createProduct(
+                          productAPI.createProduct(
                             context,
                             _productName.text,
                             _price.text,
@@ -366,5 +368,4 @@ class _AddProductState extends State<AddProduct> {
       },
     );
   }
-
 }

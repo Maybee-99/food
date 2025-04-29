@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:food/controller/category.dart';
 import 'package:food/controller/product.dart';
 import 'package:food/controller/unit.dart';
-import 'package:food/service/api_service.dart';
+import 'package:food/service/categoryService.dart';
+import 'package:food/service/productService.dart';
 
 final List<String> imgList = [
   'assets/images/1.jpg',
@@ -27,7 +28,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final api = api_service();
+  final productAIP = ProductService();
+  final categoryAIP = CategoryService();
   bool _isLoading = true;
   List<dynamic> _categories = [];
   List<dynamic> _products = [];
@@ -39,7 +41,7 @@ class _HomeState extends State<Home> {
   }
 
   void loadCategorise() async {
-    final categories = await api.getCategories(context);
+    final categories = await categoryAIP.getCategories(context);
     setState(() {
       _categories = [
         {"category_name": "ທັງໝົດ"},
@@ -50,7 +52,7 @@ class _HomeState extends State<Home> {
   }
 
   void loadProducts() async {
-    final products = await api.getProducts(context);
+    final products = await productAIP.getProducts(context);
     setState(() {
       _products = products;
       _isLoading = false;
@@ -58,7 +60,7 @@ class _HomeState extends State<Home> {
   }
 
   void loadProductsWithCategory(int index) async {
-    final products = await api.getProductsWithCate(
+    final products = await productAIP.getProductsWithCate(
       context,
       _categories[index]['category_name'],
     );

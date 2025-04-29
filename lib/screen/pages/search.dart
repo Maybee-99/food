@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:food/service/api_service.dart';
-import 'package:food/service/searchService.dart';
+import 'package:food/service/productService.dart';
 
 class Search extends StatefulWidget {
   const Search({super.key});
@@ -11,8 +10,7 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
-  final api = api_service();
-  final searchAPI = SearchService();
+  final api = ProductService();
   bool isLoading = true;
   List<dynamic> product = [];
   List<dynamic> productSearch = [];
@@ -43,7 +41,7 @@ class _SearchState extends State<Search> {
       });
       return;
     }
-    final data = await searchAPI.search(context, value);
+    final data = await api.search(context, value);
     setState(() {
       productSearch = data;
       isLoading = false;

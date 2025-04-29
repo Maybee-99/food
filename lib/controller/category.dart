@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:food/service/api_service.dart';
+import 'package:food/service/categoryService.dart';
 import 'package:iconsax/iconsax.dart';
 
 class Category extends StatefulWidget {
@@ -14,7 +14,7 @@ TextEditingController _categoryNameController = TextEditingController();
 final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
 class _CategoryState extends State<Category> {
-  final api = api_service();
+  final api = CategoryService();
   bool _isLoading = true;
   List<dynamic> _categories = [];
   @override
