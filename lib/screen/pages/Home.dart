@@ -79,6 +79,12 @@ class _HomeState extends State<Home> {
             icon: Icon(Icons.notifications_outlined),
             onPressed: () {},
           ),
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/login');
+            },
+          ),
         ],
       ),
       drawer: Drawer(

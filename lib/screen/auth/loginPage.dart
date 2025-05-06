@@ -1,0 +1,165 @@
+import 'package:flutter/material.dart';
+import 'package:food/service/loginService.dart';
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
+
+  final FocusNode _usernameFocus = FocusNode();
+  final FocusNode _passwordFocus = FocusNode();
+
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  bool _obscurePassword = true;
+
+  @override
+  void dispose() {
+    _usernameFocus.dispose();
+    _passwordFocus.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  void _loginForm() async {
+    if (_formKey.currentState!.validate()) {
+      final success = await Loginservice().login(
+        context,
+        _usernameController.text.trim(),
+        _passwordController.text.trim(),
+      );
+
+      if (success) {
+        Navigator.pushReplacementNamed(context, '/home');
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("ກຳລັງເຂົ້າສູ່ລະບົບ...")));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  CircleAvatar(
+                    radius: 60,
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/images/logo.jpeg',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    "ຍິນດີຕ້ອນຮັບເຂົ້າສູ່ລະບົບ",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 50),
+
+                  TextFormField(
+                    controller: _usernameController,
+                    textInputAction: TextInputAction.next,
+                    focusNode: _usernameFocus,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.email, color: Colors.green),
+                      hintText: "ປ້ອນອີເມລ",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    onFieldSubmitted: (_) {
+                      _usernameFocus.unfocus();
+                      FocusScope.of(context).requestFocus(_passwordFocus);
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'ກະລຸນາປ້ອນຊື່ຜູ້ໃຊ້';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+
+                  TextFormField(
+                    obscureText: _obscurePassword,
+                    focusNode: _passwordFocus,
+                    controller: _passwordController,
+                    textInputAction: TextInputAction.done,
+                    decoration: InputDecoration(
+                      prefixIcon: const Icon(Icons.lock, color: Colors.green),
+                      hintText: "ປ້ອນລະຫັດຜ່ານ",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'ກະລຸນາປ້ອນລະຫັດຜ່ານຂອງທ່ານ';
+                      }
+                      if (value.length < 8) {
+                        return 'ລະຫັດຜ່ານຕ້ອງມີຢ່າງນ້ອຍ 8 ຕົວຂື້ນ';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+
+                  ElevatedButton(
+                    onPressed: _loginForm,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF4CAF50),
+                      minimumSize: const Size(double.infinity, 60),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: const Text(
+                      "ເຂົ້າສູ່ລະບົບ",
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/register');
+                    },
+                    child: const Text("ຍັງບໍ່ມີບັນຊີ? ລົງທະບຽນ"),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

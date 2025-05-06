@@ -159,10 +159,13 @@ class _SearchState extends State<Search> {
                     topRight: Radius.circular(6),
                   ),
                   child: CachedNetworkImage(
-                    imageUrl: data[index]['image_url'],
+                    imageUrl: data[index]['image_url'] ?? '',
                     fit: BoxFit.cover,
                     width: double.infinity,
                     height: 120,
+                    errorWidget:
+                        (context, url, error) =>
+                            Icon(Icons.image, color: Colors.green, size: 50),
                   ),
                 ),
                 Expanded(

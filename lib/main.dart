@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food/screen/HomeScreen.dart';
+import 'package:food/screen/auth/loginPage.dart';
+import 'package:food/screen/auth/registerPage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,7 +38,13 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      initialRoute: '',
+      routes: {
+        '/': (context) => LoginScreen(),
+        '/home': (context) => HomeScreen(),
+        '/register': (context) => RegisterScreen(),
+        '/login': (context) => LoginScreen(),
+      },
     );
   }
 }
