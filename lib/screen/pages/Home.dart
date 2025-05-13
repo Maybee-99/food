@@ -28,8 +28,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final productAIP = ProductService();
-  final categoryAIP = CategoryService();
+  final productAPI = ProductService();
+  final categoryAPI = CategoryService();
   bool _isLoading = true;
   List<dynamic> _categories = [];
   List<dynamic> _products = [];
@@ -41,7 +41,7 @@ class _HomeState extends State<Home> {
   }
 
   void loadCategorise() async {
-    final categories = await categoryAIP.getCategories(context);
+    final categories = await categoryAPI.getCategories(context);
     setState(() {
       _categories = [
         {"category_name": "ທັງໝົດ"},
@@ -52,7 +52,7 @@ class _HomeState extends State<Home> {
   }
 
   void loadProducts() async {
-    final products = await productAIP.getProducts(context);
+    final products = await productAPI.getProducts(context);
     setState(() {
       _products = products;
       _isLoading = false;
@@ -60,7 +60,7 @@ class _HomeState extends State<Home> {
   }
 
   void loadProductsWithCategory(int index) async {
-    final products = await productAIP.getProductsWithCate(
+    final products = await productAPI.getProductsWithCate(
       context,
       _categories[index]['category_name'],
     );
@@ -288,43 +288,45 @@ class _HomeState extends State<Home> {
           crossAxisCount: 2,
         ),
         itemBuilder: (context, index) {
-          return Card(
-            elevation: 2,
-            color: Colors.white,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10),
+          return GestureDetector(
+            child: Card(
+              elevation: 2,
+              color: Colors.white,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10),
+                    ),
+                    child: CachedNetworkImage(
+                      imageUrl: _products[index]['image_url'] ?? '',
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      height: 90,
+                      errorWidget:
+                          (context, url, error) =>
+                              Icon(Icons.image, size: 50, color: Colors.green),
+                    ),
                   ),
-                  child: CachedNetworkImage(
-                    imageUrl: _products[index]['image_url'] ?? '',
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    height: 90,
-                    errorWidget:
-                        (context, url, error) =>
-                            Icon(Icons.image, size: 50, color: Colors.green),
-                  ),
-                ),
-                Expanded(
-                  child: ListTile(
-                    title: Text(
-                      _products[index]['product_name'],
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: ListTile(
+                      title: Text(
+                        _products[index]['product_name'],
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      subtitle: Text(
+                        "${_products[index]['price']} ₭/ ${_products[index]['unit_name']}",
+                        style: TextStyle(fontSize: 12, color: Colors.black87),
                       ),
                     ),
-                    subtitle: Text(
-                      "${_products[index]['price']} ₭/ ${_products[index]['unit_name']}",
-                      style: TextStyle(fontSize: 12, color: Colors.black87),
-                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },

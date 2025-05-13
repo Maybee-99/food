@@ -79,9 +79,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     focusNode: _usernameFocus,
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Icons.email, color: Colors.green),
-                      hintText: "ປ້ອນອີເມລ",
+                      hintText: "example@gmail.com",
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(
+                          color: Colors.green,
+                          width: 1,
+                        ),
+                      ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                     onFieldSubmitted: (_) {
@@ -105,8 +112,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Icons.lock, color: Colors.green),
                       hintText: "ປ້ອນລະຫັດຜ່ານ",
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.green, width: 1),
+                      ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -139,7 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       backgroundColor: const Color(0xFF4CAF50),
                       minimumSize: const Size(double.infinity, 60),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                     child: const Text(

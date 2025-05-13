@@ -1,6 +1,5 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:food/service/productService.dart';
+import 'package:food/service/categoryService.dart';
 
 class Search extends StatefulWidget {
   const Search({super.key});
@@ -10,22 +9,32 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
-  final api = ProductService();
+  final api = CategoryService();
   bool isLoading = true;
+  bool isSearching = false;
+
   List<dynamic> product = [];
   List<dynamic> productSearch = [];
   TextEditingController searchControler = TextEditingController();
+
   @override
   void initState() {
-    loadProduct();
     super.initState();
+    loadProduct();
     searchControler.addListener(() {
-      setState(() {});
+      final query = searchControler.text.trim();
+      if (query.isNotEmpty) {
+        filterSearch(query);
+      } else {
+        setState(() {
+          productSearch.clear();
+        });
+      }
     });
   }
 
   void loadProduct() async {
-    final data = await api.getProducts(context);
+    final data = await api.getCategories(context);
     setState(() {
       product = data;
       productSearch.clear();
@@ -33,164 +42,160 @@ class _SearchState extends State<Search> {
     });
   }
 
-  void searchProduct(String value) async {
-    if (value.isEmpty) {
-      loadProduct();
-      setState(() {
-        productSearch.clear();
-      });
-      return;
-    }
-    final data = await api.search(context, value);
+  void filterSearch(String query) {
+    final result =
+        product.where((item) {
+          final name = item['category_name'].toLowerCase();
+          return name.contains(query.toLowerCase());
+        }).toList();
+
     setState(() {
-      productSearch = data;
-      isLoading = false;
+      productSearch = result;
     });
+  }
+
+  void clearSearch() {
+    searchControler.clear();
+    FocusScope.of(context).unfocus();
+    setState(() {
+      isSearching = false;
+      productSearch.clear();
+    });
+  }
+
+  @override
+  void dispose() {
+    searchControler.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 238, 238, 238),
       appBar: AppBar(
-        title: Container(
-          width: double.infinity,
-          height: 45,
-          child: TextField(
-            controller: searchControler,
-            onChanged: (val) {
-              searchProduct(val);
-            },
-            decoration: InputDecoration(
-              hintText: "ຄົ້ນຫາ",
-              hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              prefixIcon: Icon(Icons.search, size: 25, color: Colors.green),
-              suffixIcon:
-                  searchControler.text.isEmpty
-                      ? null
-                      : IconButton(
-                        onPressed: () {
-                          searchControler.clear();
-                          searchProduct("");
-                        },
-                        icon: Icon(Icons.clear, color: Colors.green, size: 25),
-                      ),
-              focusedBorder: (OutlineInputBorder(
-                borderRadius: BorderRadius.circular(20),
-                borderSide: BorderSide(
-                  color: const Color.fromARGB(26, 35, 34, 34),
-                  width: 1.0,
-                ),
-              )),
-              enabledBorder: (OutlineInputBorder(
-                borderRadius: BorderRadius.circular(20),
-                borderSide: BorderSide(
-                  color: const Color.fromARGB(26, 35, 34, 34),
-                  width: 1.0,
-                ),
-              )),
-              fillColor: Colors.white,
-              filled: true,
-              contentPadding: EdgeInsets.symmetric(vertical: 5.0),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading:
+            isSearching
+                ? IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.black),
+                  onPressed: clearSearch,
+                )
+                : null,
+        title: TextField(
+          controller: searchControler,
+          onTap: () {
+            setState(() {
+              isSearching = true;
+            });
+          },
+          decoration: InputDecoration(
+            hintText: "ຄົ້ນຫາ",
+            hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+            prefixIcon: const Icon(Icons.search, color: Colors.green),
+            suffixIcon:
+                searchControler.text.isNotEmpty
+                    ? IconButton(
+                      icon: const Icon(Icons.clear, color: Colors.green),
+                      onPressed: () {
+                        searchControler.clear();
+                      },
+                    )
+                    : null,
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: BorderSide(color: Colors.grey.shade300),
             ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: BorderSide(color: Colors.grey.shade300),
+            ),
+            fillColor: Colors.white,
+            filled: true,
+            contentPadding: const EdgeInsets.symmetric(vertical: 5.0),
           ),
         ),
-        centerTitle: true,
-        backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
-        elevation: 0,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 10, top: 10),
-              child: Text(
-                "ສິນຄ້າທັງໝົດ",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 5, right: 5),
-              child: Center(
-                child:
-                    isLoading
-                        ? CircularProgressIndicator(color: Colors.green)
-                        : (searchControler.text.isEmpty
-                            ? (product.isEmpty)
-                                ? Text("ບໍ່ມີສິນຄ້າ")
-                                : buildGrid(product)
-                            : (productSearch.isEmpty
-                                ? Text("ບໍ່ພົບສິນຄ້ານີ້")
-                                : buildGrid(productSearch))),
-              ),
-            ),
-          ],
-        ),
+      body: isSearching ? buildSearchBody() : buildDefaultBody(),
+    );
+  }
+
+  Widget buildDefaultBody() {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          sectionTitle("ສິນຄ້າທັງໝົດ"),
+          isLoading
+              ? const Center(
+                child: CircularProgressIndicator(color: Colors.green),
+              )
+              : product.isEmpty
+              ? const Center(child: Text("ບໍ່ມີສິນຄ້າ"))
+              : buildGrid(product),
+          sectionTitle("ສິນຄ້ານິຍົມ"),
+          // You can add popular items here later
+        ],
       ),
     );
   }
 
+  Widget buildSearchBody() {
+    return productSearch.isEmpty
+        ? const Center(child: Text("ບໍ່ພົບສິນຄ້ານີ້"))
+        : buildGrid(productSearch);
+  }
+
   Widget buildGrid(List<dynamic> data) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemCount: data.length,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 0.9,
-      ),
-      itemBuilder: (context, index) {
-        return GestureDetector(
-          child: Card(
-            color: Colors.white,
-            elevation: 2,
-            child: Column(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(6),
-                    topRight: Radius.circular(6),
-                  ),
-                  child: CachedNetworkImage(
-                    imageUrl: data[index]['image_url'] ?? '',
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: 120,
-                    errorWidget:
-                        (context, url, error) =>
-                            Icon(Icons.image, color: Colors.green, size: 50),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: data.length,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
+          childAspectRatio: 2,
+        ),
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white,
+              ),
+              child: Center(
+                child: Text(
+                  data[index]['category_name'],
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                Expanded(
-                  child: ListTile(
-                    title: Text(
-                      data[index]['product_name'],
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    subtitle: Text(
-                      data[index]['price'].toString() +
-                          "₭/" +
-                          data[index]['unit_name'],
-                      style: TextStyle(fontSize: 12, color: Colors.black),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget sectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 15, top: 10),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 16,
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
     );
   }
 }

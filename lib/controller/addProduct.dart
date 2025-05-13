@@ -259,10 +259,23 @@ class _AddProductState extends State<AddProduct> {
                     padding: const EdgeInsets.symmetric(horizontal: 5),
                     child: ElevatedButton(
                       onPressed: () async {
-                        String imageUrl = await productAPI.upLoadImageToCloud(
-                          _file!,
-                          context,
-                        );
+                        String imageUrl = "";
+                        if (kIsWeb) {
+                          if (webImage != null) {
+                            imageUrl = await productAPI.upLoadImageToCloud(
+                              webImage!,
+                              context,
+                            );
+                          }
+                        } else {
+                          if (_file != null) {
+                            Uint8List image = await _file!.readAsBytes();
+                            imageUrl = await productAPI.upLoadImageToCloud(
+                              image,
+                              context,
+                            );
+                          }
+                        }
                         if (_formKey.currentState!.validate()) {
                           productAPI.createProduct(
                             context,

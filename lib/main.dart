@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:food/screen/HomeScreen.dart';
 import 'package:food/screen/auth/loginPage.dart';
 import 'package:food/screen/auth/registerPage.dart';
+import 'package:food/screen/pages/SearchProduct.dart';
+import 'package:food/screen/pages/search.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,7 +15,6 @@ class MyApp extends StatefulWidget {
   @override
   State<MyApp> createState() => _MyAppState();
 }
-
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
@@ -44,6 +45,8 @@ class _MyAppState extends State<MyApp> {
         '/home': (context) => HomeScreen(),
         '/register': (context) => RegisterScreen(),
         '/login': (context) => LoginScreen(),
+         '/searchProduct': (context) => SearchProduct(),
+         '/search': (context) => Search(),
       },
     );
   }
