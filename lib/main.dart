@@ -2,24 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:food/screen/HomeScreen.dart';
 import 'package:food/screen/auth/loginPage.dart';
 import 'package:food/screen/auth/registerPage.dart';
-import 'package:food/screen/pages/SearchProduct.dart';
 import 'package:food/screen/pages/search.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  final isloggedIn = prefs.getBool('isloggedIn') ?? false;
+  runApp(MyApp(isLoggedIn: isloggedIn));
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final isLoggedIn;
+  const MyApp({super.key, required this.isLoggedIn});
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
+
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Food Order App',
+      title: 'ແອັບຂາຍອອນລາຍ',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         scaffoldBackgroundColor: const Color.fromARGB(255, 239, 242, 239),
@@ -30,6 +35,14 @@ class _MyAppState extends State<MyApp> {
           showUnselectedLabels: true,
           showSelectedLabels: true,
           elevation: 2,
+          selectedLabelStyle: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
+          unselectedLabelStyle: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.green,
@@ -39,14 +52,13 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: '',
+      initialRoute: widget.isLoggedIn ? '/home' : '/login',
       routes: {
         '/': (context) => LoginScreen(),
         '/home': (context) => HomeScreen(),
         '/register': (context) => RegisterScreen(),
         '/login': (context) => LoginScreen(),
-         '/searchProduct': (context) => SearchProduct(),
-         '/search': (context) => Search(),
+        '/search': (context) => Search(),
       },
     );
   }

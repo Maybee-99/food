@@ -6,6 +6,7 @@ import 'package:food/controller/product.dart';
 import 'package:food/controller/unit.dart';
 import 'package:food/service/categoryService.dart';
 import 'package:food/service/productService.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final List<String> imgList = [
   'assets/images/1.jpg',
@@ -70,6 +71,12 @@ class _HomeState extends State<Home> {
     });
   }
 
+  Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('isloggedIn');
+    Navigator.pushNamedAndRemoveUntil(context, "/login", (route) => false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,7 +84,9 @@ class _HomeState extends State<Home> {
         actions: [
           IconButton(
             icon: Icon(Icons.notifications_outlined),
-            onPressed: () {},
+            onPressed: () {
+              logout();
+            },
           ),
           IconButton(
             icon: Icon(Icons.logout),

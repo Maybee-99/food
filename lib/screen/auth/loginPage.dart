@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food/service/loginService.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -30,18 +31,30 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _loginForm() async {
     if (_formKey.currentState!.validate()) {
-      final success = await Loginservice().login(
+      final success = await LoginService().login(
         context,
         _usernameController.text.trim(),
         _passwordController.text.trim(),
       );
 
       if (success) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isloggedIn', true);
+
+        // Optional: confirm save
+        print("Login successful, saved isloggedIn = true");
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("ກຳລັງເຂົ້າສູ່ລະບົບ...")));
+
         Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        // Show error if login failed
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("ຊື່ຜູ້ໃຊ້ ຫຼື ລະຫັດຜ່ານຜິດ")),
+        );
       }
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("ກຳລັງເຂົ້າສູ່ລະບົບ...")));
     }
   }
 
